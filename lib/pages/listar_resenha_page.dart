@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projeto_app_livros/controllers/authControlles.dart';
 import 'package:projeto_app_livros/database/resenhaDAO.dart';
 import 'package:projeto_app_livros/models/resenha.dart';
 import 'package:projeto_app_livros/pages/adicionar_resenha_page.dart';
@@ -6,7 +7,8 @@ import 'package:projeto_app_livros/themes/colors.dart';
 import 'package:projeto_app_livros/widgets/custom_appbar.dart';
 
 class ListarResenhasPage extends StatefulWidget {
-  const ListarResenhasPage({super.key});
+  final int idUsuario;
+  const ListarResenhasPage({super.key, required this.idUsuario});
 
   @override
   State<ListarResenhasPage> createState() => _ListarResenhasPageState();
@@ -22,16 +24,24 @@ class _ListarResenhasPageState extends State<ListarResenhasPage> {
   }
 
   Future<void> _carregarResenhas() async {
-    final lista = await ResenhaDAO.findAll();
+    final usuario = AuthController.usuarioLogado;
+    if (usuario == null) return; // não está logado
+
+    final lista = await ResenhaDAO.findAllByUsuario(usuario.id!); // filtra pelo usuário logado
     setState(() {
       _resenhas = lista;
     });
   }
 
   Future<void> _abrirNovaResenha() async {
+    final usuario = AuthController.usuarioLogado;
+    if (usuario == null) return; // não está logado
+
     final adicionou = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const AdicionarResenhaPage()),
+      MaterialPageRoute(
+        builder: (_) => AdicionarResenhaPage(idUsuario: usuario.id!), // sem const
+      ),
     );
 
     if (adicionou == true) {
@@ -42,23 +52,19 @@ class _ListarResenhasPageState extends State<ListarResenhasPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-      // 🔵 Custom App Bar
       appBar: const CustomAppBar(title: "Resenhas"),
       backgroundColor: AppColors.primary,
-      // ➕ Botão flutuante personalizado
       floatingActionButton: FloatingActionButton(
         onPressed: _abrirNovaResenha,
         backgroundColor: AppColors.white,
         shape: const CircleBorder(),
         child: const Icon(Icons.add, size: 32, color: AppColors.primary),
       ),
-
       body: _resenhas.isEmpty
           ? const Center(
               child: Text(
                 "Nenhuma resenha cadastrada",
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: 18, color: AppColors.white),
               ),
             )
           : ListView.builder(
@@ -66,8 +72,8 @@ class _ListarResenhasPageState extends State<ListarResenhasPage> {
               itemBuilder: (context, index) {
                 final r = _resenhas[index];
                 return Card(
-                  margin: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 10),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   color: Colors.white,
                   elevation: 3,
                   shadowColor: Colors.black26,

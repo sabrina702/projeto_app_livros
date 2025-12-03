@@ -5,7 +5,8 @@ import 'package:projeto_app_livros/themes/colors.dart';
 import 'package:projeto_app_livros/widgets/custom_appbar.dart';
 
 class PesquisarLivroPage extends StatefulWidget {
-  const PesquisarLivroPage({super.key});
+  final int idUsuario; 
+  const PesquisarLivroPage({super.key, required this.idUsuario});
 
   @override
   State<PesquisarLivroPage> createState() => _PesquisarLivroPageState();
@@ -16,6 +17,7 @@ class _PesquisarLivroPageState extends State<PesquisarLivroPage> {
   bool carregando = false;
   final controller = TextEditingController();
 
+  // Função de busca
   void buscar() async {
     String texto = controller.text.trim();
     if (texto.isEmpty) return;
@@ -36,12 +38,11 @@ class _PesquisarLivroPageState extends State<PesquisarLivroPage> {
     return Scaffold(
       backgroundColor: AppColors.primary,
       appBar: const CustomAppBar(title: "Pesquisar Livro"),
-
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // CAMPO DE PESQUISA (branco)
+            // Campo de pesquisa
             Container(
               decoration: BoxDecoration(
                 color: AppColors.white,
@@ -67,13 +68,12 @@ class _PesquisarLivroPageState extends State<PesquisarLivroPage> {
 
             const SizedBox(height: 20),
 
-            // LOADING
             if (carregando)
               const CircularProgressIndicator(color: AppColors.white),
 
             const SizedBox(height: 12),
 
-            // LISTA DE RESULTADOS
+            // Lista de resultados
             Expanded(
               child: ListView.builder(
                 itemCount: resultados.length,
@@ -97,29 +97,28 @@ class _PesquisarLivroPageState extends State<PesquisarLivroPage> {
                               ),
                             )
                           : const Icon(Icons.book, color: AppColors.primary),
-
                       title: Text(
-                        livro["titulo"],
+                        livro["titulo"] ?? "Sem título",
                         style: const TextStyle(
                           color: AppColors.primary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-
                       subtitle: Text(
-                        livro["autor"],
+                        livro["autor"] ?? "Desconhecido",
                         style: const TextStyle(color: AppColors.primary),
                       ),
-
                       onTap: () {
+                        // Abrir detalhes do livro
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => InformacoesLivroPage(livro: livro),
+                            builder: (_) => InformacoesLivroPage(
+                              livro: livro,
+                            ),
                           ),
                         );
-                      }
-
+                      },
                     ),
                   );
                 },

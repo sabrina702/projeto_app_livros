@@ -3,12 +3,14 @@ class Resenha {
   String nomeLivro;
   String descricao;
   double avaliacao;
+   int idUsuario; 
 
   Resenha({
     this.id,
     required this.nomeLivro,
     required this.descricao,
     required this.avaliacao,
+    required this.idUsuario,
   });
 
   Map<String, dynamic> toMap() {
@@ -17,6 +19,7 @@ class Resenha {
       'nomeLivro': nomeLivro,
       'descricao': descricao,
       'avaliacao': avaliacao,
+      'idUsuario': idUsuario, 
     };
   }
 
@@ -26,6 +29,7 @@ class Resenha {
       nomeLivro: map['nomeLivro'],
       descricao: map['descricao'],
       avaliacao: map['avaliacao'],
+      idUsuario: map['idUsuario'],
     );
   }
 }

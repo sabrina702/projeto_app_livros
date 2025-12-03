@@ -5,7 +5,9 @@ import '../models/livro.dart';
 import '../widgets/custom_appbar.dart';
 
 class AdicionarLivroPage extends StatefulWidget {
-  const AdicionarLivroPage({super.key});
+  final int idUsuario;
+
+  const AdicionarLivroPage({super.key, required this.idUsuario});
 
   @override
   State<AdicionarLivroPage> createState() => _AdicionarLivroPageState();
@@ -13,13 +15,12 @@ class AdicionarLivroPage extends StatefulWidget {
 
 class _AdicionarLivroPageState extends State<AdicionarLivroPage> {
   final _formKey = GlobalKey<FormState>();
-
   final TextEditingController _tituloController = TextEditingController();
   final TextEditingController _autorController = TextEditingController();
   final TextEditingController _paginasController = TextEditingController();
   final TextEditingController _resenhaController = TextEditingController();
 
-  String _status = "Quero Ler"; // valor padrão
+  String _status = "Quero Ler";
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +71,7 @@ class _AdicionarLivroPageState extends State<AdicionarLivroPage> {
 
               Center(
                 child: SizedBox(
-                  width: double.infinity, // botão largo
+                  width: double.infinity,
                   child: ElevatedButton(
                     onPressed: _salvarLivro,
                     style: ElevatedButton.styleFrom(
@@ -117,7 +118,7 @@ class _AdicionarLivroPageState extends State<AdicionarLivroPage> {
       },
       decoration: InputDecoration(
         filled: true,
-        fillColor: AppColors.lightGrayBlue, // azul acizentado
+        fillColor: AppColors.lightGrayBlue,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
       style: const TextStyle(color: Colors.white),
@@ -132,6 +133,7 @@ class _AdicionarLivroPageState extends State<AdicionarLivroPage> {
           autor: _autorController.text,
           paginas: int.parse(_paginasController.text),
           status: _status,
+          idUsuario: widget.idUsuario,
         );
 
         await LivroDAO.insert(novoLivro);
@@ -141,8 +143,8 @@ class _AdicionarLivroPageState extends State<AdicionarLivroPage> {
           const SnackBar(content: Text("Livro salvo com sucesso!"), backgroundColor: Colors.green),
         );
 
-        Future.delayed(const Duration(seconds: 1), () {
-          Navigator.pop(context, true); // volta para a home
+        Future.delayed(const Duration(milliseconds: 500), () {
+          Navigator.pop(context, true); // Retorna true para atualizar lista
         });
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
