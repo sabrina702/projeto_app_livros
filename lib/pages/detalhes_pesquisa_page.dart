@@ -12,14 +12,12 @@ class InformacoesLivroPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.primary,
       appBar: CustomAppBar(title: livro["titulo"] ?? "Detalhes do Livro"),
-
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
-            // IMAGEM DO LIVRO
+            // Imagem
             Center(
               child: livro["thumbnail"] != null
                   ? ClipRRect(
@@ -34,7 +32,7 @@ class InformacoesLivroPage extends StatelessWidget {
 
             const SizedBox(height: 24),
 
-            // TÍTULO
+            // Título
             Text(
               livro["titulo"] ?? "Sem título",
               style: const TextStyle(
@@ -46,7 +44,7 @@ class InformacoesLivroPage extends StatelessWidget {
 
             const SizedBox(height: 8),
 
-            // AUTOR
+            // Autor
             Text(
               "Autor: ${livro["autor"] ?? "Desconhecido"}",
               style: const TextStyle(
@@ -57,9 +55,9 @@ class InformacoesLivroPage extends StatelessWidget {
 
             const SizedBox(height: 12),
 
-            // PÁGINAS
+            // Páginas
             Text(
-              "Páginas: ${livro["paginas"]}",
+              "Páginas: ${livro["paginas"] ?? "N/A"}",
               style: const TextStyle(
                 fontSize: 16,
                 color: AppColors.white,
@@ -68,7 +66,7 @@ class InformacoesLivroPage extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            // DESCRIÇÃO
+            // Descrição
             const Text(
               "Descrição",
               style: TextStyle(

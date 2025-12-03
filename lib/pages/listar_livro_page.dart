@@ -4,9 +4,12 @@ import '../models/livro.dart';
 import '../widgets/custom_appbar.dart';
 import '../themes/colors.dart';
 import 'informacoes_livro_page.dart';
+import '../controllers/authControlles.dart';
 
 class ListarLivroPage extends StatefulWidget {
-  const ListarLivroPage({super.key});
+  final int idUsuario;
+
+  const ListarLivroPage({super.key, required this.idUsuario});
 
   @override
   State<ListarLivroPage> createState() => _ListarLivroPageState();
@@ -22,7 +25,10 @@ class _ListarLivroPageState extends State<ListarLivroPage> {
   }
 
   Future<void> _carregarLivros() async {
-    final lista = await LivroDAO.getAll();
+    if (!AuthController.isLogged) return;
+
+    final usuarioId = AuthController.usuarioLogado!.id!;
+    final lista = await LivroDAO.getAllByUsuario(usuarioId); // Filtra pelo usuário logado
     setState(() {
       livros = lista;
     });
@@ -46,9 +52,8 @@ class _ListarLivroPageState extends State<ListarLivroPage> {
                 final livro = livros[index];
 
                 return Card(
-                  color: Colors.white, // fundo branco
-                  margin: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 8),
+                  color: Colors.white,
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
@@ -57,7 +62,7 @@ class _ListarLivroPageState extends State<ListarLivroPage> {
                     title: Text(
                       livro.titulo,
                       style: const TextStyle(
-                        color: Colors.blue, // título azul
+                        color: Colors.blue,
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                       ),
@@ -70,14 +75,12 @@ class _ListarLivroPageState extends State<ListarLivroPage> {
                       final result = await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) =>
-                              InformacoesLivroPage(livro: livro),
+                          builder: (_) => InformacoesLivroPage(livro: livro),
                         ),
                       );
 
-                      // Se editou ou apagou, recarrega a lista
                       if (result == true) {
-                        _carregarLivros();
+                        _carregarLivros(); // Atualiza lista se houver alterações
                       }
                     },
                   ),

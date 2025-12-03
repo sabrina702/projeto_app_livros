@@ -5,12 +5,11 @@ import 'package:projeto_app_livros/themes/colors.dart';
 import 'package:projeto_app_livros/widgets/custom_appbar.dart';
 
 class AdicionarResenhaPage extends StatefulWidget {
-  const AdicionarResenhaPage({super.key});
+  final int idUsuario;
+  const AdicionarResenhaPage({super.key, required this.idUsuario});
 
   @override
   State<AdicionarResenhaPage> createState() => _AdicionarResenhaPageState();
-
-  
 }
 
 class _AdicionarResenhaPageState extends State<AdicionarResenhaPage> {
@@ -25,12 +24,20 @@ class _AdicionarResenhaPageState extends State<AdicionarResenhaPage> {
         nomeLivro: _nomeLivroController.text,
         descricao: _descricaoController.text,
         avaliacao: _avaliacao,
+        idUsuario: widget.idUsuario,
       );
 
       final result = await ResenhaDAO.insert(resenha);
 
       if (result != -1) {
         Navigator.pop(context, true);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Erro ao salvar resenha"),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }
@@ -51,33 +58,32 @@ class _AdicionarResenhaPageState extends State<AdicionarResenhaPage> {
   }
 
   Widget _buildStarRating() {
-  return Row(
-    children: List.generate(5, (index) {
-      return IconButton(
-        onPressed: () {
-          setState(() {
-            _avaliacao = index + 1;
-          });
-        },
-        icon: Icon(
-          Icons.star,
-          size: 32,
-          color: (index < _avaliacao)
-              ? Colors.yellow
-              : Colors.white.withOpacity(0.4),
-        ),
-      );
-    }),
-  );
-}
-
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center, // ⭐ centraliza as estrelas
+      children: List.generate(5, (index) {
+        return IconButton(
+          onPressed: () {
+            setState(() {
+              _avaliacao = index + 1;
+            });
+          },
+          icon: Icon(
+            Icons.star,
+            size: 32,
+            color: (index < _avaliacao)
+                ? Colors.yellow
+                : Colors.white.withOpacity(0.4),
+          ),
+        );
+      }),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.primary,
       appBar: const CustomAppBar(title: "Nova Resenha"),
-
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -86,8 +92,6 @@ class _AdicionarResenhaPageState extends State<AdicionarResenhaPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
-                // Label
                 const Text(
                   "Nome do Livro",
                   style: TextStyle(
@@ -97,8 +101,6 @@ class _AdicionarResenhaPageState extends State<AdicionarResenhaPage> {
                   ),
                 ),
                 const SizedBox(height: 6),
-
-                // Input
                 TextFormField(
                   controller: _nomeLivroController,
                   decoration: _inputDecoration(),
@@ -107,7 +109,6 @@ class _AdicionarResenhaPageState extends State<AdicionarResenhaPage> {
                 ),
                 const SizedBox(height: 16),
 
-                // Label
                 const Text(
                   "Descrição",
                   style: TextStyle(
@@ -117,8 +118,6 @@ class _AdicionarResenhaPageState extends State<AdicionarResenhaPage> {
                   ),
                 ),
                 const SizedBox(height: 6),
-
-                // Input descrição
                 TextFormField(
                   controller: _descricaoController,
                   maxLines: 5,
@@ -128,7 +127,6 @@ class _AdicionarResenhaPageState extends State<AdicionarResenhaPage> {
                 ),
                 const SizedBox(height: 20),
 
-                // Label avaliação
                 const Text(
                   "Avaliação (0 a 5)",
                   style: TextStyle(
@@ -137,7 +135,6 @@ class _AdicionarResenhaPageState extends State<AdicionarResenhaPage> {
                     color: AppColors.white,
                   ),
                 ),
-
                 Slider(
                   min: 0,
                   max: 5,
@@ -151,12 +148,10 @@ class _AdicionarResenhaPageState extends State<AdicionarResenhaPage> {
                     });
                   },
                 ),
-
                 const SizedBox(height: 8),
                 _buildStarRating(),
 
-
-                // Botão salvar
+                const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -178,7 +173,6 @@ class _AdicionarResenhaPageState extends State<AdicionarResenhaPage> {
                     ),
                   ),
                 ),
-
               ],
             ),
           ),

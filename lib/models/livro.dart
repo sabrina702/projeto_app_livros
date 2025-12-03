@@ -3,7 +3,8 @@ class Livro {
   String titulo;
   String autor;
   int paginas;
-  String status; // "Lido", "Lendo", "Quero Ler", "Abandonado"
+  String status;
+  int idUsuario; // NOVO
 
   Livro({
     this.id,
@@ -11,6 +12,7 @@ class Livro {
     required this.autor,
     required this.paginas,
     required this.status,
+    required this.idUsuario,
   });
 
   // Converter objeto para Map (para salvar no banco)
@@ -20,6 +22,7 @@ class Livro {
       'author': autor,
       'pages': paginas,
       'status': status,
+      'idUsuario': idUsuario, // NOVO
     };
     if (id != null) {
       map['id'] = id;
@@ -35,6 +38,7 @@ class Livro {
       autor: map['author'],
       paginas: map['pages'],
       status: map['status'],
+      idUsuario: map['idUsuario'], // NOVO
     );
   }
 }
